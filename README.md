@@ -2,7 +2,7 @@
 
 A custom twig lexer and extension to make comments available for parsing.
 
-Comments like the one below are usually not available in twig for parsing.
+Comments like the one below are usually not available in twig for parsing. They're skipped.
 
 ```
 {# some comment text #}
