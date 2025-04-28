@@ -109,7 +109,7 @@ Useful reading, regarding collecting context during compile time:
 > https://matthiasnoback.nl/2013/01/symfony2-twig-collecting-data-across-templates-using-a-node-visitor/
 
 An example on how one can expose compile-time information at runtime,
- is the [`machinateur/twig-context-tag`](https://github.com/machinateur/twig-context-tag) library.
+ is the [`machinateur/twig-context-tags`](https://github.com/machinateur/twig-context-tags) library.
 
 ## Limitations and compatibility
 
