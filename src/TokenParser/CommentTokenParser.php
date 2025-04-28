@@ -17,7 +17,7 @@ class CommentTokenParser extends AbstractTokenParser
         $stream = $this->parser->getStream();
 
         // Assume it was an actual comment by default.
-        $isComment = true;
+        $exposed = false;
 
         // Get the actual token the stream is pointing to.
         $token = $stream->getCurrent();
@@ -30,7 +30,7 @@ class CommentTokenParser extends AbstractTokenParser
             ]);
 
             // Detected that it's the real tag instead.
-            $isComment = false;
+            $exposed = true;
         }
 
         $stream->expect(CommentToken::COMMENT_TEXT_TYPE);
@@ -39,7 +39,7 @@ class CommentTokenParser extends AbstractTokenParser
         // Finish the tag, which never has a corresponding "endtag".
         $stream->expect(Token::BLOCK_END_TYPE);
 
-        return new CommentNode($text, $isComment, $token->getLine());
+        return new CommentNode($text, $exposed, $token->getLine());
     }
 
     public function getTag(): string

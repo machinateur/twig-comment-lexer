@@ -14,8 +14,8 @@ class CommentNode extends Node
 {
     public function __construct(
         public readonly string $text,
-        public readonly bool   $isComment = false,
-        int                    $lineno    = 0,
+        public readonly bool   $exposed = false,
+        int                    $lineno  = 0,
     ) {
         parent::__construct(lineno: $lineno);
     }
@@ -35,8 +35,8 @@ class CommentNode extends Node
     {
         $env = $compiler->getEnvironment();
 
-        if ($env->isDebug() && ! $this->isComment) {
-            $compiler->write(\sprintf('/* comment: line %d', $this->getTemplateLine()) . "\n");
+        if ($env->isDebug() && $this->exposed) {
+            $compiler->write(\sprintf('/* comment on line %d', $this->getTemplateLine()) . "\n");
             // Allow comments to be transferred to the compiled template source, when in debug mode.
             foreach (\explode("\n", $this->text) as $line) {
                 $compiler->write(\str_replace('*/', '', $line) . "\n");
