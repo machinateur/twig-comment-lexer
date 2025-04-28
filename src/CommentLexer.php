@@ -139,7 +139,7 @@ class CommentLexer extends Lexer
                 } catch (SyntaxError $error) {
                     // If this was a comment error, switch to comment mode and resume.
                     if ('Unclosed comment.' === $error->getRawMessage()
-                        && null ===$error->getPrevious()
+                        && null === $error->getPrevious()
                     ) {
                         $lexer->pushState(CommentLexer::STATE_COMMENT);
                         // Restart the loop.
