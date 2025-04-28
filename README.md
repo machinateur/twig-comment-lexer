@@ -102,7 +102,7 @@ class CommentNodeVisitor implements NodeVisitorInterface
 }
 ```
 
-Useful reading, regarding collecting context during compile time:
+Useful reading, regarding collecting template data:
 
 > https://matthiasnoback.nl/2013/01/symfony2-twig-collecting-data-across-templates-using-a-node-visitor/
 
