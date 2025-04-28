@@ -91,7 +91,12 @@ TWIG,
                 ->getSourceContext('test.html.twig')
         );
 
-        self::assertStringContainsString(' This is the test template. Comments will be lexed and can be parsed. ', $source);
+        $pattern = <<<'TEXT'
+        /* comment on line 4
+        a string comment via twig-tag works as well
+        */
+TEXT;
+        self::assertStringContainsString($pattern,  $source);
     }
 
     /**
