@@ -12,8 +12,11 @@ use Twig\Node\Node;
  */
 class CommentNode extends Node
 {
-    public function __construct(public readonly string $text, int $lineno = 0)
-    {
+    public function __construct(
+        public readonly string $text,
+        public readonly bool   $isComment = false,
+        int                    $lineno    = 0,
+    ) {
         parent::__construct(lineno: $lineno);
     }
 
@@ -32,7 +35,7 @@ class CommentNode extends Node
     {
         $env = $compiler->getEnvironment();
 
-        if ($env->isDebug()) {
+        if ($env->isDebug() && ! $this->isComment) {
             $compiler->write(\sprintf('/* comment: line %d', $this->getTemplateLine()) . "\n");
             // Allow comments to be transferred to the compiled template source, when in debug mode.
             foreach (\explode("\n", $this->text) as $line) {
