@@ -29,17 +29,24 @@ class CommentLexer extends Lexer
     {
         parent::__construct($env, $options);
 
-        // Use the kitchen-thief: https://ocramius.github.io/blog/accessing-private-php-class-members-without-reflection/.
-        $this->tokenize = \Closure::bind(function (Lexer $lexer, Source $source): TokenStream {
-            $originalRegexComment  = $lexer->regexes['lex_comment'];
+        // Out-scope the original regex, to maintain it for next calls.
+        $originalRegexComment = null;
 
+        // Use the kitchen-thief: https://ocramius.github.io/blog/accessing-private-php-class-members-without-reflection/.
+        $this->tokenize = \Closure::bind(function (Lexer $lexer, Source $source) use (&$originalRegexComment): TokenStream {
+            $lexer->initialize();
+
+            $originalRegexComment ??= $lexer->regexes['lex_comment'];
             // Always fail when lexing comments... https://regex101.com/r/sMNHfe/1
             $lexer->regexes['lex_comment'] = '{(?!)\n}sx';
 
+            $restart = true;
             while (true) {
                 try {
-                    if (!isset($error)) {
-                        return $lexer->tokenize($source);
+                    if ($restart) {
+                        $restart = false;
+                        /** @var CommentLexer $lexer */
+                        return $lexer->tokenize($source, true);
                     }
 
                     // The below code is copied from the original lexer.
@@ -70,20 +77,23 @@ class CommentLexer extends Lexer
 
                             // Modification: Added comment mode, to add comment tokens/tag.
                             case CommentLexer::STATE_COMMENT:
-                                $lexer->pushToken(CommentToken::COMMENT_START_TYPE, \strlen($lexer->options['tag_comment'][2]));
+                                $lexer->pushToken(CommentToken::COMMENT_START_TYPE, $lexer->options['tag_comment'][0]);
+                                $lexer->pushToken(Token::NAME_TYPE, 'comment');
 
                                 /**
                                  * @var $match array<int,array{0:string,1:int}>
                                  */
                                 if (!\preg_match($originalRegexComment, $lexer->code, $match, \PREG_OFFSET_CAPTURE, $lexer->cursor)) {
-                                    throw new SyntaxError('Unclosed comment.', $lexer->lineno, $lexer->source);
+                                    $exception = new \UnexpectedValueException('Comment not matched.', $lexer->cursor);
+
+                                    throw new SyntaxError('Unclosed comment.', $lexer->lineno, $lexer->source, $exception);
                                 }
 
-                                $text = \substr($lexer->code, $lexer->cursor, $match[0][1] - $lexer->cursor - \strlen($lexer->options['tag_comment'][1]));
+                                $text = \substr($lexer->code, $lexer->cursor, $match[0][1] - $lexer->cursor);
 
                                 $lexer->pushToken(CommentToken::COMMENT_TEXT_TYPE, $text);
-                                $lexer->pushToken(CommentToken::COMMENT_END_TYPE, \strlen($lexer->options['tag_comment'][1]));
-                                $lexer->moveCursor($text . $lexer->options['tag_comment'][1] . $match[0][0]);
+                                $lexer->pushToken(CommentToken::COMMENT_END_TYPE, $lexer->options['tag_comment'][1]);
+                                $lexer->moveCursor($text . $match[0][0]);
                                 $lexer->popState();
 
                                 unset($text);
@@ -105,8 +115,11 @@ class CommentLexer extends Lexer
                     break;
                 } catch (SyntaxError $error) {
                     // If this was a comment error, switch to comment mode and resume.
-                    if ('Unclosed comment.' === $error->getMessage()) {
+                    if ('Unclosed comment.' === $error->getRawMessage()
+                        && null ===$error->getPrevious()
+                    ) {
                         $lexer->pushState(CommentLexer::STATE_COMMENT);
+                        // Restart the loop.
                         continue;
                     }
 
@@ -120,8 +133,15 @@ class CommentLexer extends Lexer
         }, null, Lexer::class);
     }
 
-    public function tokenize(Source $source): TokenStream
+    /**
+     * @throws SyntaxError
+     */
+    public function tokenize(Source $source, bool $bypass = false): TokenStream
     {
+        if ($bypass) {
+            return parent::tokenize($source);
+        }
+
         return ($this->tokenize)($this, $source);
     }
 }

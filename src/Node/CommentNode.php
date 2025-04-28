@@ -33,7 +33,7 @@ class CommentNode extends Node
         $env = $compiler->getEnvironment();
 
         if ($env->isDebug()) {
-            $compiler->write(\sprintf("/* comment: line=%d \n", $this->getTemplateLine()));
+            $compiler->write(\sprintf('/* comment: line %d', $this->getTemplateLine()) . "\n");
             // Allow comments to be transferred to the compiled template source, when in debug mode.
             foreach (\explode("\n", $this->text) as $line) {
                 $compiler->write(\str_replace('*/', '', $line) . "\n");
