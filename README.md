@@ -85,7 +85,7 @@ class CommentNodeVisitor implements NodeVisitorInterface
     {
         if ($node instanceof CommentNode) {
             // TODO: Do stuff to the comment's content...
-            //  And track it inside the collector node, if needed.
+            //  And track it inside the collector node, if needed at runtime.
         }
 
         return $node;
@@ -104,6 +104,9 @@ class CommentNodeVisitor implements NodeVisitorInterface
 Useful reading, regarding collecting context during compile time:
 
 > https://matthiasnoback.nl/2013/01/symfony2-twig-collecting-data-across-templates-using-a-node-visitor/
+
+An example on how one can expose compile-time information at runtime,
+ is the [`machinateur/twig-context-tag`](https://github.com/machinateur/twig-context-tag) library.
 
 ## Limitations and compatibility
 
