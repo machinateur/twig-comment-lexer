@@ -1,6 +1,6 @@
 # machinateur/twig-comment-lexer
 
-A custom twig lexer and extension to make comments available for parsing.
+A custom [twig](https://github.com/twig/twig) lexer and extension to make comments available for parsing.
 
 Comments like the one below are usually not available in twig for parsing. They're skipped.
 
