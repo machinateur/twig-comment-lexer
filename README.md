@@ -68,11 +68,9 @@ namespace Machinateur\Twig\NodeVisitor;
 use Machinateur\Twig\Node\CommentNode;
 use Twig\Environment;
 use Twig\Node\Node;
+use Twig\Node\ModuleNode;
 use Twig\NodeVisitor\NodeVisitorInterface;
 
-/**
- * some simple example class
- */
 class CommentNodeVisitor implements NodeVisitorInterface
 {
     public function enterNode(Node $node, Environment $env): Node
