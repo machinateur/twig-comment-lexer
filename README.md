@@ -37,6 +37,9 @@ composer require machinateur/twig-comment-lexer
 
 ## Intended usage
 
+The lexer can be installed for an environment by calling `\Machinateur\Twig\Extension\CommentExtension::setLexer($twig)`,
+ where `$twig` is the `\Twig\Environment` to set the lexer for. Have a look at the tests for an overview.
+
 More out of necessity than as an actual feature, this twig extension allows for exposing comments in template code.
  This only works when in debug mode, for security reasons. Debug mode should not be active on production environments.
 
