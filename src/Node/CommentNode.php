@@ -27,12 +27,14 @@ declare(strict_types=1);
 
 namespace Machinateur\Twig\Node;
 
+use Twig\Attribute\YieldReady;
 use Twig\Compiler;
 use Twig\Node\Node;
 
 /**
  * A node representing a comment inside the template source code.
  */
+#[YieldReady]
 class CommentNode extends Node
 {
     public function __construct(
