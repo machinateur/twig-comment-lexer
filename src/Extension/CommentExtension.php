@@ -44,10 +44,10 @@ use Twig\Extension\AbstractExtension;
  */
 class CommentExtension extends AbstractExtension
 {
-    public static function setLexer(Environment $twig): void
+    public static function setLexer(Environment $twig, array $options = []): void
     {
         $twig->setLexer(
-            new CommentLexer($twig)
+            new CommentLexer($twig, $options)
         );
     }
 
